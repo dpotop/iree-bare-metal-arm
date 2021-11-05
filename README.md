@@ -1,12 +1,13 @@
-# IREE Bare-Metal Arm Sample
+# IREE Bare-Metal Arm Sample on Raspberry Pi 3
 
-**DISCLAIMER**: This is a fork meant to add support for the Raspberry Pi cards.
+This is a fork of the original repository meant to allow execution on Raspberry Pi 3 SBCs (instead of the various types of platforms proposed by renode).
+
+This projects demonstrates how to build [IREE](https://github.com/google/iree) with the [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm) for bare-metal Raepberry Pi targets.
 
 **DISCLAIMER**:
 This project is not intended for everyday use and made available without any support.
 However, we welcome any kind of feedback via the issue tracker or if appropriate via IREE's [communication channels](https://github.com/google/iree#communication-channels), e.g. via the Discord server.
 
-This projects demonstrates how to build [IREE](https://github.com/google/iree) with the [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm) for bare-metal Arm targets using either the open-source firmware library [libopencm3](https://github.com/libopencm3/libopencm3) or [CMSIS](https://github.com/ARM-software/CMSIS_5).
 ## Getting Started
 
 ### Prerequisites
@@ -17,7 +18,7 @@ You need CMake and the [GNU Arm Embedded Toolchain](https://developer.arm.com/to
 #### Clone
 
 ```shell
-git clone https://github.com/iml130/iree-bare-metal-arm.git
+git clone https://github.com/dpotop/iree-bare-metal-arm.git
 cd iree-bare-metal-arm
 git submodule update --init
 cd third_party/iree
@@ -83,41 +84,11 @@ cmake -GNinja \
 #     -DBUILD_WITH_LIBOPENCM3=ON \
       -DCMAKE_TOOLCHAIN_FILE="`realpath ../build_tools/cmake/arm.toolchain.cmake`" \
       -DARM_TOOLCHAIN_ROOT="${PATH_TO_ARM_TOOLCHAIN}" \
-      -DARM_CPU="armv7e-m" \
+      -DARM_CPU="armv8-a" \
       -DIREE_HAL_DRIVERS_TO_BUILD="VMVX_Sync" \
       -DIREE_HOST_BINARY_ROOT="${PATH_TO_IREE_HOST_BINARY_ROOT}" \
       -DCUSTOM_ARM_LINKER_FLAGS="${CUSTOM_ARM_LINKER_FLAGS}" \
       -DLINKER_SCRIPT="${PATH_TO_LINKER_SCRIPT}" \
       ..
 cmake --build . --target simple_embedding
-```
-
-### Test with Renode
-
-You can use [Renode](https://renode.io/) to execute the created binary.
-
-```shell
-wget https://github.com/renode/renode/releases/download/v1.12.0/renode-1.12.0.linux-portable.tar.gz
-tar -xvzf renode-1.12.0.linux-portable.tar.gz
-```
-Execution is done via the interactive Renode shell (for headless execution see [here](https://github.com/renode/renode/issues/138)):
-
-```shell
-cd renode_1.12.0_portable
-./renode
-```
-Inside the shell you need to execute the following statements:
-```shell
-(monitor) include @scripts/single-node/stm32f4_discovery.resc
-(STM32F4_Discovery) sysbus LoadELF @${PATH_TO_BINARY}
-(STM32F4_Discovery) showAnalyzer sysbus.uart2
-(STM32F4_Discovery) start
-```
-You should be able to see the output of the executable in the analyzer window for uart2.
-
-This example also comes with a robot test file:
-
-```shell
-cd renode_1.12.0_portable
-test.sh --variable ELF:${PATH_TO_BINARY} ${PATH_TO_REPOSITORY_ROOT}/tests/simple_embedding.robot
 ```
