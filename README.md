@@ -1,5 +1,7 @@
 # IREE Bare-Metal Arm Sample
 
+**DISCLAIMER**: This is a fork meant to add support for the Raspberry Pi cards.
+
 **DISCLAIMER**:
 This project is not intended for everyday use and made available without any support.
 However, we welcome any kind of feedback via the issue tracker or if appropriate via IREE's [communication channels](https://github.com/google/iree#communication-channels), e.g. via the Discord server.
